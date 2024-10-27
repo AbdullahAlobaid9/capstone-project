@@ -48,7 +48,6 @@ jobs:
         with:
           push: true
           cache-from: afalobaid9/capstone-flask:latest
-          cache-to: afalobaid9/capstone-flask:latest
           tags: |
             afalobaid9/capstone-flask:latest
             afalobaid9/capstone-flask:${{ github.sha }}
