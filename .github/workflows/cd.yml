@@ -12,13 +12,13 @@ jobs:
     steps:
       - name: Deploy to ${{ matrix.nodes }}
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          SSH_USERNAME: ${{ secrets.AWS_SSH_USERNAME }}
         run: |
           ssh-keyscan ${{ matrix.nodes }} >> ~/.ssh/known_hosts
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_actions
+          echo "$AWS_SSH_PRIVATE_KEY" > ~/.ssh/github_actions
           chmod 600 ~/.ssh/github_actions
-          ssh -i ~/.ssh/github_actions $SSH_USERNAME@${{ matrix.nodes }} "
+          ssh -i ~/.ssh/github_actions $AWS_SSH_USERNAME@${{ matrix.nodes }} "
                       cd /capstone-flask && 
                       docker pull afalobaid9/capstone-flask:latest &&
                       docker stop web || true && 
