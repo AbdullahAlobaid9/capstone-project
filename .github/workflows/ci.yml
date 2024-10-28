@@ -22,6 +22,10 @@ jobs:
 
       - name: install dependencies
         run: pip install -r requirements.txt
+      
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_VARS }}" >> .env
 
       - name: Run the test
         run: docker compose up -d && docker compose exec -it web python test_app.py
