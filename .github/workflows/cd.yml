@@ -18,10 +18,12 @@ jobs:
           # sudo ssh-keyscan ${{ matrix.nodes }} >> ~/.ssh/known_hosts
           # sudo echo "$AWS_SSH_PRIVATE_KEY" > ~/.ssh/github_actions
           # sudo chmod 600 ~/.ssh/github_actions
-          ssh -i ~/.ssh/github_actions -o StrictHostKeyChecking=no -o IdentitiesOnly=yes $AWS_SSH_USERNAME@10.0.2.29 << 'EOF'
-                cd /capstone-flask
-                sudo docker pull afalobaid9/capstone-flask:latest
-                sudo docker stop web || true
-                sudo docker rm web || true
-                sudo docker run -d -p 80:5000 --name web --env-file .env afalobaid9/capstone-flask:latest
-          EOF
+          ssh -i ~/.ssh/github_actions $AWS_SSH_USERNAME@${{ matrix.nodes }} "
+                      cd /capstone-flask && 
+                      sudo docker pull afalobaid9/capstone-flask:latest &&
+                      sudo docker stop web || true && 
+                      sudo docker rm web || true && 
+                      sudo docker run -d -p 80:5000 --name web \
+                        --env-file .env \
+                        afalobaid9/capstone-flask:latest \
+                    "
