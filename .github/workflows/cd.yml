@@ -1,1 +1,29 @@
 name: Deploy
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        nodes: ["10.0.2.198", "10.0.2.197"]
+
+    steps:
+      - name: Deploy to ${{ matrix.nodes }}
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          ssh-keyscan $SERVER_2_HOST >> ~/.ssh/known_hosts
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_actions
+          chmod 600 ~/.ssh/github_actions
+          ssh -i ~/.ssh/github_actions $SSH_USERNAME@${{ matrix.nodes }} "
+                      cd /capstone-flask && 
+                      docker pull afalobaid9/capstone-flask:latest &&
+                      docker stop web || true && 
+                      docker rm web || true && 
+                      docker run -d -p 80:5000 --name web \
+                        --env-file .env \
+                        afalobaid9/capstone-flask:latest \
+                    "
